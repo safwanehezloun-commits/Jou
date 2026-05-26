@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NEON STORM — عاصفة النيون الاحترافية</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-cyan: #00e5ff;
+            --neon-pink: #ff2d95;
+            --neon-gold: #ffd700;
+            --neon-green: #00ff88;
+            --bg-dark: #050512;
+            --panel-bg: rgba(10, 22, 40, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-dark);
+            font-family: 'Orbitron', 'Noto Kufi Arabic', sans-serif;
+            color: #e0e0ff;
+            position: fixed;
+            inset: 0;
+            touch-action: none;
+        }
+
+        /* كانفاس اللعبة الرئيسي */
+        canvas#gameCanvas {
+            display: block;
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            will-change: transform;
+        }
+
+        /* طبقة واجهة المستخدم المتطورة */
+        .ui-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .ui-layer > * { pointer-events: auto; }
+
+        /* شاشة التحميل الاحترافية */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader-title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+        .bar-outer {
+            width: 300px;
+            height: 6px;
+            background: #111424;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            overflow: hidden;
+        }
+        .bar-inner {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            box-shadow: 0 0 10px var(--neon-cyan);
+            transition: width 0.1s ease;
+        }
+
+        /* القائمة الرئيسية السايبربانك */
+        #main-menu {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(10,20,50,0.4) 0%, var(--bg-dark) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            z-index: 100;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        #main-menu.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .menu-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 30px var(--neon-cyan);
+        }
+        .menu-title span { color: var(--neon-pink); text-shadow: 0 0 30px var(--neon-pink); }
+        .menu-subtitle { font-size: 1rem; color: #657595; letter-spacing: 2px; margin-top: 5px; }
+
+        /* الأزرار الاحترافية مع الاستجابة اللمسية */
+        .btn {
+            width: 240px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, rgba(15, 32, 67, 0.8), rgba(7, 13, 28, 0.9));
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: 0.5s;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn:active {
+            transform: scale(0.95);
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(7, 13, 28, 0.9));
+        }
+        .btn-primary {
+            border-color: var(--neon-pink);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 45, 149, 0.4);
+        }
+
+        /* واجهة الـ HUD داخل اللعبة */
+        #hud {
+            position: fixed;
+            top: 20px; left: 20px; right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 50;
+            font-family: 'Orbitron', sans-serif;
+        }
+        #hud.hidden { display: none; }
+        .hud-panel {
+            background: rgba(5, 10, 25, 0.75);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .hud-stat { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .hud-label { color: #657595; font-size: 0.85rem; }
+        
+        /* أشرطة الحالة المتقدمة */
+        .bar-container { width: 150px; height: 8px; background: #111; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .bar-fill { height: 100%; width: 100%; transition: width 0.2s ease-out; }
+        .hp-fill { background: linear-gradient(90deg, #00ff88, #00aa55); box-shadow: 0 0 8px var(--neon-green); }
+        .shield-fill { background: linear-gradient(90deg, #00bcff, #0066cc); box-shadow: 0 0 8px #00bcff; }
+
+        /* النوافذ المنبثقة (المتجر والإعدادات) */
+        .panel {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 3, 10, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+        .panel.hidden { opacity: 0; pointer-events: none; }
+        .panel-content {
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+        .panel-title { font-size: 1.8rem; margin-bottom: 20px; color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0,229,255,0.3); }
+
+        /* قائمة المتجر */
+        .shop-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .shop-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .shop-item-details { text-align: right; }
+        .shop-item-name { font-weight: 700; color: #fff; font-size: 0.95rem; }
+        .shop-item-desc { font-size: 0.75rem; color: #657595; }
+
+        /* شاشة نهاية اللعبة */
+        #gameover-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 15, 0.9);
+            z-index: 150;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.4s ease;
+        }
+        #gameover-screen.hidden { opacity: 0; pointer-events: none; }
+        .go-title { font-size: 3rem; font-weight: 900; color: var(--neon-pink); text-shadow: 0 0 25px var(--neon-pink); }
+
+        /* أدوات التحكم باللمس الاحترافية للهواتف */
+        #touch-controls {
+            position: fixed;
+            bottom: 40px; left: 40px; right: 40px;
+            display: none;
+            justify-content: space-between;
+            align-items: flex-end;
+            z-index: 60;
+            pointer-events: none;
+        }
+        #touch-controls.active { display: flex; }
+        
+        .joystick-container {
+            width: 140px; height: 140px;
+            background: rgba(0, 229, 255, 0.03);
+            border: 2px solid rgba(0, 229, 255, 0.15);
+            border-radius: 50%;
+            position: relative;
+            pointer-events: auto;
+        }
+        .joystick-knob {
+            width: 50px; height: 50px;
+            background: radial-gradient(circle, var(--neon-cyan) 0%, rgba(0,180,255,0.6) 100%);
+            box-shadow: 0 0 15px var(--neon-cyan);
+            border-radius: 50%;
+            position: absolute;
+            top: 45px; left: 45px;
+            transform: translate(0, 0);
+            will-change: transform;
+        }
+
+        .action-buttons { display: flex; gap: 15px; pointer-events: auto; }
+        .circle-btn {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-pink);
+            background: rgba(255, 45, 149, 0.1);
+            box-shadow: 0 0 15px rgba(255, 45, 149, 0.2);
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        .circle-btn:active { transform: scale(0.85); background: rgba(255, 45, 149, 0.4); }
+        .circle-btn.bomb { border-color: var(--neon-gold); background: rgba(255, 215, 0, 0.1); }
+        .circle-btn.bomb:active { background: rgba(255, 215, 0, 0.4); }
+
+        /* تذييل احترافي متناسق للقائمة */
+        .credits-footer {
+            position: absolute;
+            bottom: 15px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ui-layer">
+        
+        <div id="loading-screen">
+            <div class="loader-title">NEON STORM</div>
+            <div class="bar-outer"><div class="bar-inner" id="load-bar"></div></div>
+        </div>
+
+        <div id="main-menu" class="hidden">
+            <div class="menu-header">
+                <div class="menu-title">NEON <span>STORM</span></div>
+                <div class="menu-subtitle">ENGINE VERSION 2.0 // HIGH CONSOLE PERFORMANCE</div>
+            </div>
+            <button class="btn btn-primary" id="start-game-btn">ابدأ المعركة الحية</button>
+            <button class="btn" id="shop-btn">المتجر والترقيات</button>
+            <button class="btn" id="settings-btn">الإعدادات المتقدمة</button>
+            
+            <div class="credits-footer">UNDER SUPERVISION OF PROFESSOR SAFWAN</div>
+        </div>
+
+        <div id="hud" class="hidden">
+            <div class="hud-panel">
+                <div class="hud-stat"><span class="hud-label">SCORE:</span> <span id="score-text" style="color: var(--neon-cyan)">000000</span></div>
+                <div class="hud-stat"><span class="hud-label">COMBO:</span> <span id="combo-text" style="color: var(--neon-pink)">x1</span></div>
+                <div class="hud-stat"><span class="hud-label">COINS:</span> <span id="coins-text" style="color: var(--neon-gold)">🪙 0</span></div>
+            </div>
+            <div class="hud-panel">
+                <div class="hud-stat">
+                    <span class="hud-label">HP</span>
+                    <div class="bar-container"><div class="bar-fill hp-fill" id="hp-bar"></div></div>
+                </div>
+                <div class="hud-stat">
+                    <span class="hud-label">SHIELD</span>
+                    <div class="bar-container"><div class="bar-fill shield-fill" id="shield-bar"></div></div>
+                </div>
+                <div class="hud-stat"><span class="hud-label">WAVE:</span> <span id="wave-text" style="color: #fff">1</span></div>
+            </div>
+        </div>
+
+        <div id="shop-panel" class="panel hidden">
+            <div class="panel-content">
+                <div class="panel-title">الترقيات والعتاد النيوني</div>
+                <div style="color: var(--neon-gold); font-weight:700; margin-bottom:15px;" id="shop-wallet">🪙 0 عملة</div>
+                <div class="shop-list">
+                    <div class="shop-item">
+                        <div class="shop-item-details">
+                            <div class="shop-item-name">مستوى النيران المزدوجة</div>
+                            <div class="shop-item-desc">مضاعفة الرصاص الصادر من الطائرة</div>
+                        </div>
+                        <button class="btn" style="width:100px; padding:8px;" onclick="buyUpgrade('weapon', 200)">🪙 200</button>
+                    </div>
+                    <div class="shop-item">
+                        <div class="shop-item-details">
+                            <div class="shop-item-name">المولد الكهرومغناطيسي للدرع</div>
+                            <div class="shop-item-desc">زيادة سعة امتصاص الضربات بنسبة 50%</div>
+                        </div>
+                        <button class="btn" style="width:100px; padding:8px;" onclick="buyUpgrade('shield', 150)">🪙 150</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="width:100%;" id="close-shop-btn">العودة للقائمة</button>
+            </div>
+        </div>
+
+        <div id="settings-panel" class="panel hidden">
+            <div class="panel-content">
+                <div class="panel-title">التحكم والتحسينات اللمسية</div>
+                <p style="font-size:0.9rem; color:#657595; margin-bottom:20px;">توليد أصوات إجرائية فورية عالي الأداء عبر رقاقة السمع الافتراضية</p>
+                <button class="btn" style="width:100%; margin-bottom:10px;" id="reset-data-btn">إعادة تعيين البيانات المحلية</button>
+                <button class="btn btn-primary" style="width:100%;" id="close-settings-btn">إغلاق وتطبيق</button>
+            </div>
+        </div>
+
+        <div id="gameover-screen" class="hidden">
+            <div class="go-title">MISSION FAILED</div>
+            <div style="font-size:1.3rem; color:#657595;">لقد دُمرت سفينتك وسط عاصفة الأعداء</div>
+            <div id="go-score-summary" style="font-size:1.5rem; font-weight:700; color: var(--neon-gold);">SCORE: 0</div>
+            <button class="btn btn-primary" id="restart-game-btn">إعادة المحاولة الفورية</button>
+            <button class="btn" id="exit-menu-btn">الخروج للقائمة الرئيسية</button>
+        </div>
+
+        <div id="touch-controls" class="">
+            <div class="joystick-container" id="v-joystick">
+                <div class="joystick-knob" id="v-knob"></div>
+            </div>
+            <div class="action-buttons">
+                <div class="circle-btn bomb" id="v-bomb">💣</div>
+                <div class="circle-btn" id="v-fire">🔥</div>
+            </div>
+        </div>
+
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // ==========================================
+        // 1. إدارة الحالة الافتراضية والتخزين الآمن
+        // ==========================================
+        const state = {
+            score: 0,
+            combo: 1,
+            comboTimer: 0,
+            coins: parseInt(localStorage.getItem('ns_coins')) || 0,
+            weaponLevel: parseInt(localStorage.getItem('ns_weapon')) || 1,
+            maxShield: parseInt(localStorage.getItem('ns_shield')) || 100,
+            isGameOver: false,
+            isPlaying: false,
+            wave: 1,
+            isMobile: false
+        };
+
+        function saveState() {
+            localStorage.setItem('ns_coins', state.coins);
+            localStorage.setItem('ns_weapon', state.weaponLevel);
+            localStorage.setItem('ns_shield', state.maxShield);
+        }
+
+        // ==========================================
+        // 2. المحرك الصوتي التخليقي الافتراضي (Web Audio API)
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'shoot') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.12);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now); osc.stop(now + 0.12);
+                } else if (type === 'explode') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.exponentialRampToValueAtTime(10, now + 0.4);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now); osc.stop(now + 0.4);
+                } else if (type === 'powerup') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(900, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now); osc.stop(now + 0.2);
+                } else if (type === 'bomb') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.linearRampToValueAtTime(40, now + 0.8);
+                    gain.gain.setValueAtTime(0.6, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                    osc.start(now); osc.stop(now + 0.8);
+                }
+            } catch(e) { console.log("Audio not allowed yet"); }
+        }
+
+        // ==========================================
+        // 3. تهيئة الجرافيكس والكانفاس المستجيب
+        // ==========================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            state.isMobile = canvas.width < 768;
+            const controls = document.getElementById('touch-controls');
+            if(state.isMobile && state.isPlaying) controls.classList.add('active');
+            else controls.classList.remove('active');
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // محاكاة شاشة التحميل السلسة
+        let loadPercent = 0;
+        const loadInterval = setInterval(() => {
+            loadPercent += 4;
+            document.getElementById('load-bar').style.width = loadPercent + '%';
+            if (loadPercent >= 100) {
+                clearInterval(loadInterval);
+                document.getElementById('loading-screen').style.opacity = 0;
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-menu').classList.remove('hidden');
+                }, 500);
+            }
+        }, 30);
+
+        // ==========================================
+        // 4. الكيانات الهندسية (Game Entities) والفيزياء
+        // ==========================================
+        class Player {
+            constructor() {
+                this.x = canvas.width / 2;
+                this.y = canvas.height * 0.8;
+                this.radius = 22;
+                this.speed = 8;
+                this.hp = 100;
+                this.shield = state.maxShield;
+                this.targetX = this.x;
+                this.targetY = this.y;
+            }
+
+            update(keys, joyX, joyY) {
+                // التحكم باستخدام الكيبورد أو عصا التحكم باللمس الخطي الناعم
+                if (Math.abs(joyX) > 0.1 || Math.abs(joyY) > 0.1) {
+                    this.x += joyX * this.speed;
+                    this.y += joyY * this.speed;
+                } else {
+                    if (keys['ArrowUp'] || keys['w']) this.y -= this.speed;
+                    if (keys['ArrowDown'] || keys['s']) this.y += this.speed;
+                    if (keys['ArrowLeft'] || keys['a']) this.x -= this.speed;
+                    if (keys['ArrowRight'] || keys['d']) this.x += this.speed;
+                }
+
+                // الحفاظ على الطائرة داخل حدود الكانفاس الحية
+                if (this.x < this.radius) this.x = this.radius;
+                if (this.x > canvas.width - this.radius) this.x = canvas.width - this.radius;
+                if (this.y < this.radius) this.y = this.radius;
+                if (this.y > canvas.height - this.radius) this.y = canvas.height - this.radius;
+
+                // استرجاع الدرع ببطء مع الوقت تلقائياً كآلية جيمبلاي عادلة
+                if (this.shield < state.maxShield && frames % 5 === 0) {
+                    this.shield = Math.min(state.maxShield, this.shield + 0.2);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // رسم توهج النيون للدرع الافتراضي المحيط بالسفينة
+                if (this.shield > 0) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius + 12, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(0, 188, 255, ' + (this.shield / state.maxShield) + ')';
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = varColor('--neon-cyan');
+                    ctx.stroke();
+                }
+
+                // رسم الطائرة المقاتلة كـ Vector هندسي حاد وأنيق
+                ctx.beginPath();
+                ctx.moveTo(0, -this.radius);
+                ctx.lineTo(this.radius, this.radius);
+                ctx.lineTo(0, this.radius * 0.4);
+                ctx.lineTo(-this.radius, this.radius);
+                ctx.closePath();
+                ctx.fillStyle = '#fff';
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = varColor('--neon-cyan');
+                ctx.fill();
+                
+                ctx.restore();
+            }
+
+            takeDamage(amount) {
+                if (this.shield > 0) {
+                    this.shield -= amount;
+                    if (this.shield < 0) { this.hp += this.shield; this.shield = 0; }
+                } else {
+                    this.hp -= amount;
+                }
+                playSynthSound('shoot'); // صوت تلقي الضرر التخيلي
+                if (this.hp <= 0) {
+                    this.hp = 0;
+                    endGame();
+                }
+                updateHUD();
+            }
+        }
+
+        class Bullet {
+            constructor(x, y, angle, speed, isEnemy = false) {
+                this.x = x;
+                this.y = y;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.radius = isEnemy ? 4 : 3;
+                this.isEnemy = isEnemy;
+                this.active = true;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.active = false;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.isEnemy ? varColor('--neon-pink') : varColor('--neon-cyan');
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.fill();
+            }
+        }
+
+        class Enemy {
+            constructor(type) {
+                this.x = Math.random() * (canvas.width - 60) + 30;
+                this.y = -40;
+                this.type = type; // 'scout', 'elite', 'boss'
+                this.active = true;
+                this.framesCount = 0;
+
+                switch(type) {
+                    case 'boss':
+                        this.x = canvas.width / 2;
+                        this.y = -100;
+                        this.radius = 70;
+                        this.hp = 600 + state.wave * 200;
+                        this.maxHp = this.hp;
+                        this.speed = 1.5;
+                        break;
+                    case 'elite':
+                        this.radius = 24;
+                        this.hp = 4;
+                        this.speed = 2.5;
+                        break;
+                    default: // scout
+                        this.radius = 16;
+                        this.hp = 1;
+                        this.speed = 3.5;
+                }
+            }
+
+            update() {
+                this.framesCount++;
+                
+                if (this.type === 'boss') {
+                    // تحرك الزعيم لمنتصف الشاشة العلوية ثم البقاء والاستعراض الهجومي
+                    if (this.y < canvas.height * 0.22) this.y += this.speed;
+                    else {
+                        this.x += Math.sin(this.framesCount * 0.02) * 2.5;
+                    }
+
+                    // أنماط هجوم الزعيم المتطورة الـ Bullet Hell
+                    if (this.framesCount % 35 === 0) {
+                        // نمط 1: الإطلاق الدائري المروحي الشامل
+                        let baseAngle = (this.framesCount * 0.1);
+                        for(let i=0; i<8; i++) {
+                            bullets.push(new Bullet(this.x, this.y, baseAngle + (Math.PI*2/8)*i, 5, true));
+                        }
+                    }
+                } else {
+                    this.y += this.speed;
+                    if (this.type === 'elite') {
+                        this.x += Math.sin(this.framesCount * 0.04) * 2;
+                        if (this.framesCount % 50 === 0) {
+                            // إطلاق الذكاء الاصطناعي الخاص بالـ Elite نحو إحداثيات اللاعب الحالية
+                            let angle = Math.atan2(player.y - this.y, player.x - this.x);
+                            bullets.push(new Bullet(this.x, this.y, angle, 5, true));
+                        }
+                    }
+                    if (this.y > canvas.height + 40) this.active = false;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                if (this.type === 'boss') {
+                    // رسم هيكل زعيم هندسي ضخم ومرعب
+                    ctx.beginPath();
+                    ctx.moveTo(0, this.radius);
+                    ctx.lineTo(this.radius, -this.radius);
+                    ctx.lineTo(-this.radius, -this.radius);
+                    ctx.closePath();
+                    ctx.fillStyle = varColor('--neon-pink');
+                    ctx.shadowBlur = 40;
+                    ctx.shadowColor = varColor('--neon-pink');
+                    ctx.fill();
+
+                    // شريط طاقة الزعيم العلوي المنبثق
+                    ctx.restore();
+                    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                    ctx.fillRect(canvas.width*0.2, 70, canvas.width*0.6, 6);
+                    ctx.fillStyle = varColor('--neon-pink');
+                    ctx.fillRect(canvas.width*0.2, 70, (canvas.width*0.6) * (this.hp/this.maxHp), 6);
+                    return;
+                }
+
+                // رسم الأعداء العاديين والـ Elite بدقة
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.type === 'elite' ? varColor('--neon-gold') : '#ff4444';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.fill();
+                
+                ctx.restore();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                let angle = Math.random() * Math.PI * 2;
+                let speed = Math.random() * 4 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.active = true;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.03;
+                if (this.alpha <= 0) this.active = false;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // ==========================================
+        // 5. تهيئة المصفوفات وهياكل المحرك الأساسي
+        // ==========================================
+        let player;
+        let bullets = [];
+        let enemies = [];
+        let particles = [];
+        let keys = {};
+        let frames = 0;
+        let joyX = 0, joyY = 0;
+
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        // إطلاق القنابل التطهيرية الشاملة للوحوش الشاشة
+        function triggerScreenBomb() {
+            if (state.score >= 100) { // شرط تكلفة مالي أو نقاطي معقول لضرب القنبلة
+                state.score = Math.max(0, state.score - 100);
+                playSynthSound('bomb');
+                enemies.forEach(e => {
+                    for(let i=0; i<15; i++) particles.push(new Particle(e.x, e.y, '#ffd700'));
+                });
+                enemies = [];
+                updateHUD();
+            }
+        }
+
+        function firePlayerBullet() {
+            if (state.weaponLevel === 1) {
+                bullets.push(new Bullet(player.x, player.y - player.radius, -Math.PI/2, 10));
+            } else {
+                // نيران مزدوجة متطورة ترقية
+                bullets.push(new Bullet(player.x - 10, player.y - player.radius, -Math.PI/2, 10));
+                bullets.push(new Bullet(player.x + 10, player.y - player.radius, -Math.PI/2, 10));
+            }
+            playSynthSound('shoot');
+        }
+
+        // ==========================================
+        // 6. الـ Input Handling المتطور اللمسي والكيبورد
+        // ==========================================
+        window.addEventListener('keydown', e => {
+            keys[e.key] = true;
+            if (e.key === ' ' && !state.isGameOver && state.isPlaying) firePlayerBullet();
+            if ((e.key === 'f' || e.key === 'F') && !state.isGameOver && state.isPlaying) triggerScreenBomb();
+        });
+        window.addEventListener('keyup', e => keys[e.key] = false);
+
+        // برمجة عصا التحكم الفيرتشوال الفائقة الأداء للهواتف
+        const joystick = document.getElementById('v-joystick');
+        const knob = document.getElementById('v-knob');
+        let joyActive = false, joyStartX = 0, joyStartY = 0;
+
+        joystick.addEventListener('touchstart', e => {
+            joyActive = true;
+            const touch = e.touches[0];
+            const rect = joystick.getBoundingClientRect();
+            joyStartX = rect.left + rect.width / 2;
+            joyStartY = rect.top + rect.height / 2;
+        });
+
+        window.addEventListener('touchmove', e => {
+            if (!joyActive) return;
+            const touch = e.touches[0];
+            let dx = touch.clientX - joyStartX;
+            let dy = touch.clientY - joyStartY;
+            let distance = Math.sqrt(dx*dx + dy*dy);
+            let maxDist = 45;
+
+            if (distance > maxDist) {
+                dx = (dx / distance) * maxDist;
+                dy = (dy / distance) * maxDist;
+            }
+
+            knob.style.transform = `translate(${dx}px, ${dy}px)`;
+            
+            // تمرير قيم التوجيه الموحدة للمحرك الفعلي للفيزياء
+            joyX = dx / maxDist;
+            joyY = dy / maxDist;
+        });
+
+        window.addEventListener('touchend', () => {
+            joyActive = false;
+            knob.style.transform = 'translate(0px, 0px)';
+            joyX = 0; joyY = 0;
+        });
+
+        document.getElementById('v-fire').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (state.isPlaying && !state.isGameOver) firePlayerBullet();
+        });
+        document.getElementById('v-bomb').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (state.isPlaying && !state.isGameOver) triggerScreenBomb();
+        });
+
+        // ==========================================
+        // 7. محرك التصادمات ودورة الإطارات والـ Loop
+        // ==========================================
+        function initGame() {
+            player = new Player();
+            bullets = [];
+            enemies = [];
+            particles = [];
+            state.score = 0;
+            state.combo = 1;
+            state.wave = 1;
+            state.isGameOver = false;
+            state.isPlaying = true;
+            
+            updateHUD();
+            resizeCanvas();
+            
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('gameover-screen').classList.add('hidden');
+            document.getElementById('hud').classList.remove('hidden');
+        }
+
+        function endGame() {
+            state.isPlaying = false;
+            state.isGameOver = true;
+            document.getElementById('hud').classList.add('hidden');
+            document.getElementById('touch-controls').classList.remove('active');
+            document.getElementById('gameover-screen').classList.remove('hidden');
+            document.getElementById('go-score-summary').innerText = `TOTAL SCORE: ${state.score}`;
+            saveState();
+        }
+
+        function updateHUD() {
+            document.getElementById('score-text').innerText = String(state.score).padStart(6, '0');
+            document.getElementById('combo-text').innerText = `x${state.combo}`;
+            document.getElementById('coins-text').innerText = `🪙 ${state.coins}`;
+            document.getElementById('wave-text').innerText = state.wave;
+            document.getElementById('hp-bar').style.width = player.hp + '%';
+            document.getElementById('shield-bar').style.width = (player.shield / state.maxShield * 100) + '%';
+        }
+
+        function loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (state.isPlaying && !state.isGameOver) {
+                frames++;
+
+                // منطق توليد الأعداء بشكل ديناميكي تدريجي احترافي
+                if (frames % 90 === 0) {
+                    // إذا وصلنا للموجة الـ 5 ومضاعفاتها ولم يتواجد زعيم نطلق الزعيم الـ Boss
+                    if (state.wave % 5 === 0 && !enemies.some(e => e.type === 'boss')) {
+                        enemies.push(new Enemy('boss'));
+                    } else if (!enemies.some(e => e.type === 'boss')) {
+                        let rand = Math.random();
+                        if (rand > 0.7) enemies.push(new Enemy('elite'));
+                        else enemies.push(new Enemy('scout'));
+                    }
+                }
+
+                // زيادة رقم الموجة الافتراضية كل 1000 إطار لتصعيد الصعوبة
+                if (frames % 1000 === 0) {
+                    state.wave++;
+                    updateHUD();
+                }
+
+                // الكيانات الافتراضية للتحديث والرسم
+                player.update(keys, joyX, joyY);
+                player.draw();
+
+                // التحديث على مصفوفات الرصاص المتواجد في المعركة
+                bullets.forEach((b, bIdx) => {
+                    b.update();
+                    b.draw();
+                    
+                    // التحقق من التصادم القاتل للرصاص
+                    if (b.active) {
+                        if (b.isEnemy) {
+                            // تصادم رصاص العدو مع جسم الطائرة الخاصة بنا
+                            let dist = Math.hypot(b.x - player.x, b.y - player.y);
+                            if (dist < b.radius + player.radius) {
+                                player.takeDamage(15);
+                                b.active = false;
+                            }
+                        } else {
+                            // رصاص اللاعب مع الأعداء والوحوش الحالية
+                            enemies.forEach(e => {
+                                let dist = Math.hypot(b.x - e.x, b.y - e.y);
+                                if (dist < b.radius + e.radius) {
+                                    e.hp--;
+                                    b.active = false;
+                                    if (e.hp <= 0) e.active = false;
+                                }
+                            });
+                        }
+                    }
+                    if (!b.active) bullets.splice(bIdx, 1);
+                });
+
+                // تحديث كيانات الأعداء وتفجيرهم والموت النيوني المضيء
+                enemies.forEach((e, eIdx) => {
+                    e.update();
+                    e.draw();
+
+                    // تصادم جسم الطائرة بالوحش مباشرة
+                    let dist = Math.hypot(e.x - player.x, e.y - player.y);
+                    if (dist < e.radius + player.radius) {
+                        player.takeDamage(30);
+                        e.active = false;
+                    }
+
+                    if (!e.active) {
+                        if (e.hp <= 0) { // مات مقتولاً وليس بسبب الهروب لخارج الشاشة
+                            playSynthSound('explode');
+                            state.score += (e.type === 'boss' ? 500 : (e.type === 'elite' ? 50 : 10)) * state.combo;
+                            state.coins += e.type === 'boss' ? 50 : (e.type === 'elite' ? 5 : 1);
+                            
+                            // زيادة الكومبو مع قتل الأعداء المتسارع
+                            state.combo++;
+                            
+                            // خلق انفجار جزيئات بصرية متناثرة مذهلة
+                            let pColor = e.type === 'elite' ? varColor('--neon-gold') : (e.type === 'boss' ? varColor('--neon-pink') : '#ff4444');
+                            for(let i=0; i<12; i++) particles.push(new Particle(e.x, e.y, pColor));
+                            
+                            updateHUD();
+                        }
+                        enemies.splice(eIdx, 1);
+                    }
+                });
+
+                // معالجة ورسم جزيئات الـ Particles المشتعلة بالخلفية
+                particles.forEach((p, pIdx) => {
+                    p.update();
+                    p.draw();
+                    if (!p.active) particles.splice(pIdx, 1);
+                });
+
+            } else {
+                // مجرد رسم الخلفية الشبكية الهادئة أثناء توقف اللعب أو شاشات القائمة
+                ctx.fillStyle = "rgba(0, 229, 255, 0.02)";
+                ctx.font = "bold 14px Orbitron";
+                ctx.fillText("ENGINE PROTOCOL ACTIVE // SAFWAN INTEL", 30, canvas.height - 30);
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        // ==========================================
+        // 8. منطق النوافذ والمتاجر والـ UI المتبقي
+        // ==========================================
+        document.getElementById('start-game-btn').addEventListener('click', () => initGame());
+        document.getElementById('restart-game-btn').addEventListener('click', () => initGame());
+        document.getElementById('exit-menu-btn').addEventListener('click', () => {
+            document.getElementById('gameover-screen').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+        });
+
+        // المتجر
+        const shopPanel = document.getElementById('shop-panel');
+        document.getElementById('shop-btn').addEventListener('click', () => {
+            document.getElementById('shop-wallet').innerText = `🪙 ${state.coins} عملة نيونية`;
+            shopPanel.classList.remove('hidden');
+        });
+        document.getElementById('close-shop-btn').addEventListener('click', () => shopPanel.classList.add('hidden'));
+
+        function buyUpgrade(type, cost) {
+            if (state.coins >= cost) {
+                state.coins -= cost;
+                if (type === 'weapon') state.weaponLevel = 2;
+                if (type === 'shield') state.maxShield += 50;
+                saveState();
+                playSynthSound('powerup');
+                document.getElementById('shop-wallet').innerText = `🪙 ${state.coins} عملة نيونية`;
+                alert("تم الترقية وشراء العتاد بنجاح بنظام اللعبة الافتراضي!");
+            } else {
+                alert("الرصيد غير كافٍ من عملات النيون، تابع تدمير أساطيل الوحوش!");
+            }
+        }
+
+        // الإعدادات
+        const settingsPanel = document.getElementById('settings-panel');
+        document.getElementById('settings-btn').addEventListener('click', () => settingsPanel.classList.remove('hidden'));
+        document.getElementById('close-settings-btn').addEventListener('click', () => settingsPanel.classList.add('hidden'));
+        document.getElementById('reset-data-btn').addEventListener('click', () => {
+            localStorage.clear();
+            location.reload();
+        });
+
+        // التشغيل المبدئي الفوري للمحرك
+        resizeCanvas();
+        requestAnimationFrame(loop);
+    </script>
+</body>
+                              </html> 
