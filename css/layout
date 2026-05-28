@@ -1,0 +1,112 @@
+/* ============================================================
+   NEON STORM — MAIN LAYOUT & GRID
+   ============================================================ */
+
+/* الطبقة الأساسية لواجهة المستخدم فوق الكانفاس */
+.ui-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.ui-layer > * {
+  pointer-events: auto;
+}
+
+/* حاوية الشاشات المختلفة (القائمة الرئيسية، الإعدادات...) */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--safe-top) 0 var(--safe-bottom) 0;
+  z-index: 100;
+  transition: var(--transition-bounce);
+}
+.screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.92);
+}
+
+/* شاشة التحميل */
+#loading-screen {
+  background: radial-gradient(ellipse at center, #0a0a20 0%, #020210 100%);
+  z-index: 9999;
+}
+
+/* القائمة الرئيسية */
+#main-menu {
+  background: transparent;
+  gap: clamp(6px, 1.2vh, 14px);
+}
+
+/* حاوية اللوحات المنبثقة */
+.panel {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 16, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.panel.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.92);
+  transition: var(--transition-bounce);
+}
+
+/* صندوق اللوحة الزجاجي */
+.panel-box {
+  background: var(--bg-glass-heavy);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border-color);
+  border-radius: var(--panel-radius);
+  padding: var(--panel-padding);
+  max-width: 92vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  width: clamp(280px, 78vw, 480px);
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(0,229,255,0.2);
+}
+
+/* صف أزرار القائمة */
+.menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* شاشة نهاية اللعبة */
+#gameover-screen {
+  background: rgba(5, 5, 16, 0);
+  transition: background 1s ease;
+  z-index: 150;
+}
+#gameover-screen.show {
+  background: rgba(5, 5, 16, 0.88);
+}
+
+/* أقسام داخل اللوحات */
+.panel-section {
+  margin: 12px 0;
+  padding: 10px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* تباعد رأسي مرن */
+.spacer {
+  flex: 1;
+}
