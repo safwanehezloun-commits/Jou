@@ -1,0 +1,60 @@
+/* ============================================================
+   NEON STORM — DESIGN TOKENS (متغيرات التصميم)
+   ============================================================ */
+:root {
+  /* --- الألوان الأساسية المتوهجة --- */
+  --neon-cyan: #00e5ff;
+  --neon-pink: #ff2d95;
+  --neon-gold: #ffd700;
+  --neon-green: #00ff88;
+  --neon-purple: #aa66ff;
+  --neon-red: #ff0044;
+  --neon-orange: #ff6600;
+  --neon-amber: #ffbb00;
+  --neon-magenta: #ff00aa;
+
+  /* --- ألوان الخلفية والظلال --- */
+  --bg-deep: #050510;
+  --bg-darker: #030308;
+  --bg-panel: #0a1628;
+  --bg-panel-alt: #060d1a;
+  --bg-card: rgba(8, 14, 30, 0.7);
+  --bg-glass: rgba(10, 20, 40, 0.55);
+  --bg-glass-heavy: rgba(5, 10, 25, 0.75);
+
+  /* --- حدود وزجاج --- */
+  --glass-blur: 18px;
+  --glass-border-color: rgba(0, 229, 255, 0.2);
+  --glass-border-heavy: rgba(0, 229, 255, 0.45);
+  --border-glow: 0 0 12px rgba(0, 229, 255, 0.3);
+
+  /* --- الزخرفة العربية (الأرابيسك) --- */
+  --arabesque-color: rgba(0, 229, 255, 0.12);
+  --arabesque-accent: rgba(255, 45, 149, 0.08);
+  --arabesque-blend: overlay;
+
+  /* --- مسافات الأمان للهواتف (notch / safe area) --- */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* --- أبعاد وأحجام قياسية --- */
+  --btn-min-width: clamp(130px, 38vw, 200px);
+  --btn-padding-y: clamp(8px, 1.5vh, 14px);
+  --btn-padding-x: clamp(16px, 3.5vw, 32px);
+  --panel-padding: clamp(14px, 2.5vw, 28px);
+  --panel-radius: 22px;
+  --btn-radius: 12px;
+  --card-radius: 16px;
+
+  /* --- الخطوط --- */
+  --font-display: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', 'Noto Kufi Arabic', sans-serif;
+  --font-arabic: 'Noto Kufi Arabic', sans-serif;
+
+  /* --- التحولات --- */
+  --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+  --transition-fast: all 0.12s ease-out;
+}
