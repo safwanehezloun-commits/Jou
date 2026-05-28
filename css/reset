@@ -1,0 +1,79 @@
+/* ============================================================
+   NEON STORM — CSS RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-deep);
+  font-family: var(--font-body);
+  color: #e0e0ff;
+  touch-action: manipulation; /* تمنع سلوكيات المتصفح غير المرغوبة */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-drag: none;
+  -webkit-overflow-scrolling: touch;
+  position: fixed;
+  inset: 0;
+  cursor: default;
+}
+
+/* لوحة الرسم الأساسية */
+canvas {
+  display: block;
+  image-rendering: auto;
+}
+
+/* الروابط والعناصر النصية لا تحمل زخرفة */
+a, button, input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+  text-decoration: none;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+button, select {
+  cursor: pointer;
+}
+
+/* إخفاء شريط التمرير الافتراضي عند الحاجة */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--neon-pink);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-cyan);
+}
+
+/* تعطيل السحب على الصور */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* إعدادات أساسية للوسائط */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
