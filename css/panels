@@ -1,0 +1,200 @@
+/* ============================================================
+   NEON STORM — PANELS (المتجر، الإعدادات، الإنجازات، المساعدة)
+   ============================================================ */
+
+/* رأس اللوحة */
+.panel-box h2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(18px, 4vw, 28px);
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: clamp(10px, 2vh, 18px);
+}
+
+/* زر الإغلاق الموحد */
+.panel-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #aaa;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  z-index: 5;
+}
+.panel-close:active {
+  border-color: var(--neon-pink);
+  color: var(--neon-pink);
+  transform: scale(0.85);
+}
+
+/* عنصر المتجر */
+.shop-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10,16,32,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--card-radius);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  gap: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(4px);
+}
+.shop-item.affordable {
+  border-color: rgba(0,255,136,0.3);
+}
+.shop-info {
+  text-align: right;
+  flex: 1;
+}
+.shop-info .name {
+  font-weight: 700;
+  font-size: clamp(13px,2.4vw,16px);
+  color:#e0e0ff;
+}
+.shop-info .desc {
+  font-size: clamp(10px,1.8vw,13px);
+  color:#667;
+  margin-top:3px;
+}
+.shop-cost {
+  font-family: var(--font-display);
+  font-weight:700;
+  color:var(--neon-gold);
+  font-size:clamp(12px,2.4vw,15px);
+  white-space:nowrap;
+}
+.shop-btn {
+  font-family: var(--font-display);
+  font-weight:700;
+  font-size:clamp(11px,1.9vw,13px);
+  color:#050510;
+  background:var(--neon-cyan);
+  border:none;
+  border-radius:8px;
+  padding:6px 14px;
+  cursor:pointer;
+  transition:var(--transition-fast);
+}
+.shop-btn:active {
+  background:#33eeff;
+  transform:scale(0.91);
+}
+.shop-btn:disabled {
+  opacity:0.3;
+  cursor:default;
+  transform:none;
+  background:#333;
+  color:#667;
+}
+.shop-equipped {
+  font-size:10px;
+  color:var(--neon-green);
+  background:rgba(0,255,136,0.15);
+  padding:3px 8px;
+  border-radius:6px;
+  border:1px solid rgba(0,255,136,0.3);
+}
+
+/* عنصر الإنجاز */
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10,16,32,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--card-radius);
+  padding: 8px;
+  margin-bottom: 5px;
+  text-align: right;
+}
+.achievement.unlocked {
+  border-color: rgba(255,215,0,0.6);
+}
+.ach-icon {
+  font-size: clamp(20px,3.5vw,28px);
+  width: 36px;
+  text-align: center;
+  opacity: 0.3;
+}
+.achievement.unlocked .ach-icon {
+  opacity: 1;
+}
+.ach-info {
+  flex: 1;
+}
+.ach-info .name {
+  font-weight: 700;
+  font-size: clamp(11px,2.2vw,14px);
+  color: #aab;
+}
+.achievement.unlocked .ach-info .name {
+  color: var(--neon-gold);
+}
+.ach-info .desc {
+  font-size: clamp(9px,1.8vw,11px);
+  color: #556;
+}
+
+/* عنصر لوحة الصدارة */
+.lb-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 6px;
+  font-size: clamp(12px,2.2vw,14px);
+}
+.lb-entry .rank {
+  font-family: var(--font-display);
+  font-weight: 900;
+  width: 28px;
+}
+.lb-entry:nth-child(1) .rank { color: var(--neon-gold); }
+.lb-entry:nth-child(2) .rank { color: #c0c0c0; }
+.lb-entry:nth-child(3) .rank { color: #cd7f32; }
+.lb-entry .score {
+  font-family: var(--font-display);
+  font-weight:700;
+  color:#e0e0ff;
+}
+.lb-entry .wave-lbl {
+  font-size:clamp(10px,1.8vw,12px);
+  color:#667;
+}
+.lb-entry.me {
+  background: rgba(0,229,255,0.08);
+  border:1px solid rgba(0,229,255,0.3);
+  border-radius:8px;
+  margin:2px 0;
+}
+
+/* صف الإعدادات */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 10px;
+}
+.setting-row label {
+  font-size: clamp(13px,2.4vw,16px);
+  color:#aab;
+  flex:1;
+  text-align:right;
+}
