@@ -1,0 +1,130 @@
+/* ============================================================
+   NEON STORM — VISUAL EFFECTS (وميض، تداخل، تراكبات)
+   ============================================================ */
+
+/* إشعار الإنجاز */
+.ach-toast {
+  position: fixed;
+  top: clamp(50px,9vh,80px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  z-index: 300;
+  background: linear-gradient(135deg,#1a1000,#2a1800);
+  border: 1px solid rgba(255,215,0,0.6);
+  border-radius: 16px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display), var(--font-arabic);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+  box-shadow: 0 0 35px rgba(255,215,0,0.2);
+}
+.ach-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* إشعار منبثق */
+.notif {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 260;
+  pointer-events: none;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(18px,4.5vw,30px);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.notif.show { opacity: 1; }
+.notif.gold { color: var(--neon-gold); text-shadow: 0 0 24px rgba(255,215,0,0.6); }
+.notif.cyan { color: var(--neon-cyan); text-shadow: 0 0 24px rgba(0,229,255,0.6); }
+.notif.green { color: var(--neon-green); text-shadow: 0 0 24px rgba(0,255,136,0.6); }
+
+/* سهم خارج الشاشة */
+.offscreen-arrow {
+  position: fixed;
+  z-index: 35;
+  pointer-events: none;
+  font-size: 22px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  text-shadow: 0 0 14px var(--neon-pink);
+}
+.offscreen-arrow.visible { opacity: 0.85; }
+
+/* تراكب صحة منخفضة */
+#low-hp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 32;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(255,0,0,0.35) 100%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+#low-hp-overlay.active { opacity: 1; }
+
+/* تراكب إعلان الموجة */
+#wave-announce {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 45;
+  pointer-events: none;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+#wave-announce.show { opacity: 1; }
+#wave-announce .wa-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(28px,7vw,56px);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 40px rgba(0,229,255,0.8);
+}
+#wave-announce.warning .wa-title {
+  color: var(--neon-pink);
+  text-shadow: 0 0 40px rgba(255,45,149,0.8);
+}
+.wa-sub {
+  font-family: var(--font-arabic);
+  font-weight: 700;
+  font-size: clamp(13px,2.5vw,20px);
+  color: #aab;
+  margin-top: 6px;
+}
+
+/* عداد الإطارات */
+#fps-counter {
+  position: fixed;
+  bottom: 70px;
+  right: 14px;
+  z-index: 55;
+  font-size: 11px;
+  color: rgba(0,229,255,0.4);
+  font-family: var(--font-display);
+  pointer-events: none;
+  display: none;
+}
+#fps-counter.visible { display: block; }
+
+/* تأثيرات إضافية */
+.neon-text {
+  text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-pink);
+}
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border-color);
+  border-radius: 16px;
+}
