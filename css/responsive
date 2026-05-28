@@ -1,0 +1,66 @@
+/* ============================================================
+   NEON STORM — RESPONSIVE DESIGN
+   ============================================================ */
+
+/* الشاشات الصغيرة جداً (هواتف قديمة) */
+@media (max-width: 360px) {
+  :root {
+    --btn-min-width: 110px;
+  }
+  .btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  .touch-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* الوضع الأفقي للهواتف */
+@media (orientation: landscape) and (max-height: 500px) {
+  #main-menu {
+    gap: 4px;
+  }
+  .mm-title {
+    font-size: clamp(20px, 4.5vh, 36px);
+  }
+  .panel-box {
+    max-height: 90vh;
+    padding: clamp(8px, 1.5vw, 16px);
+  }
+  #hud {
+    padding: 3px 8px;
+  }
+  .bar-container {
+    height: 5px;
+  }
+}
+
+/* الأجهزة اللوحية */
+@media (min-width: 768px) {
+  :root {
+    --btn-min-width: 180px;
+    --panel-padding: 24px 32px;
+  }
+  .touch-btn {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* شاشات عالية الدقة (Retina) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .glass-panel {
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* تفضيلات المستخدم للحركة المخفضة */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
