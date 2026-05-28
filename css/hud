@@ -1,0 +1,115 @@
+/* ============================================================
+   NEON STORM — HUD STYLES
+   ============================================================ */
+#hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  font-family: var(--font-display);
+  padding: calc(8px + var(--safe-top)) calc(10px + var(--safe-right)) 0 calc(10px + var(--safe-left));
+}
+#hud.hidden {
+  display: none;
+}
+.hud-left {
+  text-align: right;
+  pointer-events: auto;
+}
+.hud-right {
+  text-align: left;
+  pointer-events: auto;
+}
+.hud-score {
+  font-weight: 900;
+  font-size: clamp(16px,4vw,26px);
+  color: #e0e0ff;
+  text-shadow: 0 0 12px rgba(0,229,255,0.4);
+}
+.hud-combo {
+  font-weight: 700;
+  font-size: clamp(12px,2.4vw,16px);
+  color: var(--neon-gold);
+  text-shadow: 0 0 10px rgba(255,215,0,0.4);
+  display: none;
+}
+.hud-bombs, .hud-coins {
+  font-weight: 700;
+  font-size: clamp(12px,2.4vw,15px);
+}
+.hud-xp {
+  font-weight: 500;
+  font-size: clamp(11px,2vw,14px);
+  color: var(--neon-cyan);
+}
+.bar-container {
+  width: clamp(120px,30vw,190px);
+  height: clamp(8px,1.4vw,11px);
+  background: #111;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 4px;
+  border: 1px solid #222;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.2s ease;
+}
+.hp-fill {
+  background: linear-gradient(90deg,#00ff88,#00cc66);
+}
+.hp-fill.warn {
+  background: linear-gradient(90deg,#ffd700,#ff8800);
+}
+.hp-fill.critical {
+  background: linear-gradient(90deg,#ff4444,#cc0000);
+}
+.shield-fill {
+  background: linear-gradient(90deg,#0088ff,#00aaff);
+}
+.wave-progress {
+  width: clamp(100px,24vw,160px);
+  height: 4px;
+  background: #111;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+.wave-fill {
+  height: 100%;
+  background: var(--neon-cyan);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.powerup-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: clamp(10px,2vw,13px);
+}
+.pu-icon {
+  width: clamp(16px,3vw,22px);
+  height: clamp(16px,3vw,22px);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(10px,2vw,13px);
+}
+.pu-timer {
+  width: clamp(40px,10vw,60px);
+  height: 4px;
+  background: #111;
+  border-radius: 3px;
+}
+.pu-timer-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.2s;
+}
